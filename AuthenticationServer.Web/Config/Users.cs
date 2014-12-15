@@ -19,9 +19,9 @@ namespace AuthenticationServer.Web.Config
         /// Gets a list of authorized users.
         /// </summary>
         /// <returns>A list of authorized users</returns>
-        public static IEnumerable<InMemoryUser> Get()
+        public static List<InMemoryUser> Get()
         {
-            return new[]
+            return new List<InMemoryUser>
                 {
                     new InMemoryUser
                         {
