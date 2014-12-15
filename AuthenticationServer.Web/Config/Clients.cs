@@ -6,14 +6,14 @@ using Thinktecture.IdentityServer.Core.Models;
 namespace AuthenticationServer.Web.Config
 {
     /// <summary>
-    /// Class containing Authorized Clients(Application) that can authenticate.
+    /// Class containing supported clients application that can authenticate.
     /// </summary>
     public class Clients
     {
         /// <summary>
-        /// Gets a list of authorized clients
+        /// Gets a list of supported clients
         /// </summary>
-        /// <returns>A list of authorized clients</returns>
+        /// <returns>A list of supported clients</returns>
         public static IEnumerable<Client> Get()
         {
             return new[]
