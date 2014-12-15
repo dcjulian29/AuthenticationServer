@@ -28,7 +28,7 @@ namespace AuthenticationServer.Web.Config
                             Username = "coordinator1",
                             Password = "Password1",
                             Subject = "1",
-                            Claims = new []
+                            Claims = new[]
                                 {
                                     new Claim(Constants.ClaimTypes.GivenName, "Coodinator"),
                                     new Claim(Constants.ClaimTypes.FamilyName, "One") 
@@ -39,7 +39,7 @@ namespace AuthenticationServer.Web.Config
                             Username = "coordinator2",
                             Password = "Password2",
                             Subject = "1",
-                            Claims = new []
+                            Claims = new[]
                                 {
                                     new Claim(Constants.ClaimTypes.GivenName, "Coodinator"),
                                     new Claim(Constants.ClaimTypes.FamilyName, "Two") 
@@ -50,7 +50,7 @@ namespace AuthenticationServer.Web.Config
                             Username = "admin",
                             Password = "Pa$$w0rd",
                             Subject = "1",
-                            Claims = new []
+                            Claims = new[]
                                 {
                                     new Claim(Constants.ClaimTypes.GivenName, "System"),
                                     new Claim(Constants.ClaimTypes.FamilyName, "Administrator") 

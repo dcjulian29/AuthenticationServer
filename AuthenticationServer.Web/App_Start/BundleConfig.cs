@@ -1,10 +1,16 @@
-﻿using System.Web;
-using System.Web.Optimization;
+﻿using System.Web.Optimization;
 
 namespace AuthenticationServer.Web
 {
+    /// <summary>
+    /// Provides methods for configuring bundles.
+    /// </summary>
     public class BundleConfig
     {
+        /// <summary>
+        /// Registers the various bundles.
+        /// </summary>
+        /// <param name="bundles">The container holding the bundles.</param>
         public static void RegisterBundles(BundleCollection bundles)
         {
             bundles.Add(new ScriptBundle("~/bundles/jquery").Include(

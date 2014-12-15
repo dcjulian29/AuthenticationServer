@@ -1,29 +1,32 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Web;
 using System.Web.Mvc;
 
 namespace AuthenticationServer.Web.Controllers
 {
+    /// <summary>
+    /// Represents the Home Controller
+    /// </summary>
     public class HomeController : Controller
     {
+        /// <summary>
+        /// Returns the view containing the user's claims
+        /// </summary>
+        /// <returns>The Home View</returns>
         public ActionResult Index()
         {
-            return View();
+            return View((User as ClaimsPrincipal).Claims);
         }
 
+        /// <summary>
+        /// Returns the view containing a description of this application
+        /// </summary>
+        /// <returns>The About View</returns>
         public ActionResult About()
         {
-            ViewBag.Message = "Your application description page.";
-
-            return View();
-        }
-
-        public ActionResult Contact()
-        {
-            ViewBag.Message = "Your contact page.";
-
             return View();
         }
     }
