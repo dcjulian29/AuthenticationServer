@@ -32,7 +32,7 @@ namespace AuthenticationServer.Web
                             SiteName = "Authentication Server",
                             IssuerUri = "http://localhost",
                             SigningCertificate = LoadCertificate(),
-                            Factory = InMemoryFactory.Create(Users.Get(), Clients.Get(), StandardScopes.All)
+                            Factory = InMemoryFactory.Create(Users.Get(), Clients.Get(), Scopes.Get())
                         });
                 });
 
@@ -47,6 +47,7 @@ namespace AuthenticationServer.Web
                     {
                         Authority = "https://localhost:44300/identity",
                         ClientId = "authsrv",
+                        Scope = "openid profile roles",
                         RedirectUri = "https://localhost:44300/",
                         SignInAsAuthenticationType = "Cookies"
                     });

@@ -31,7 +31,8 @@ namespace AuthenticationServer.Web.Config
                             Claims = new[]
                                 {
                                     new Claim(Constants.ClaimTypes.GivenName, "Coodinator"),
-                                    new Claim(Constants.ClaimTypes.FamilyName, "One") 
+                                    new Claim(Constants.ClaimTypes.FamilyName, "One"),
+                                    new Claim(Constants.ClaimTypes.Role, "Assessments")
                                 }
                         },
                     new InMemoryUser
@@ -42,7 +43,20 @@ namespace AuthenticationServer.Web.Config
                             Claims = new[]
                                 {
                                     new Claim(Constants.ClaimTypes.GivenName, "Coodinator"),
-                                    new Claim(Constants.ClaimTypes.FamilyName, "Two") 
+                                    new Claim(Constants.ClaimTypes.FamilyName, "Two"),
+                                    new Claim(Constants.ClaimTypes.Role, "Assessments")
+                                }
+                        },
+                    new InMemoryUser
+                        {
+                            Username = "manager1",
+                            Password = "Password!",
+                            Subject = Guid.NewGuid().ToString(),
+                            Claims = new[]
+                                {
+                                    new Claim(Constants.ClaimTypes.GivenName, "Case"),
+                                    new Claim(Constants.ClaimTypes.FamilyName, "Manager"),
+                                    new Claim(Constants.ClaimTypes.Role, "Selections")
                                 }
                         },
                     new InMemoryUser
@@ -53,7 +67,8 @@ namespace AuthenticationServer.Web.Config
                             Claims = new[]
                                 {
                                     new Claim(Constants.ClaimTypes.GivenName, "System"),
-                                    new Claim(Constants.ClaimTypes.FamilyName, "Administrator") 
+                                    new Claim(Constants.ClaimTypes.FamilyName, "Administrator"),
+                                    new Claim(Constants.ClaimTypes.Role, "Administration")
                                 }
                         }
                 };
