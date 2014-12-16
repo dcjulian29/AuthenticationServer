@@ -16,6 +16,7 @@ namespace AuthenticationServer.Web.Controllers
         /// Returns the view containing the user's claims
         /// </summary>
         /// <returns>The Home View</returns>
+        [Authorize]
         public ActionResult Index()
         {
             return View((User as ClaimsPrincipal).Claims);
