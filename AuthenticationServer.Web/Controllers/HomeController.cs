@@ -30,5 +30,12 @@ namespace AuthenticationServer.Web.Controllers
         {
             return View();
         }
+
+        public ActionResult Logout()
+        {
+            Request.GetOwinContext().Authentication.SignOut();
+
+            return View();
+        }
     }
 }
