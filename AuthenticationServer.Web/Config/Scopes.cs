@@ -28,6 +28,12 @@ namespace AuthenticationServer.Web.Config
                                 {
                                     new ScopeClaim("role")
                                 }
+                        },
+                    new Scope
+                        {
+                            Enabled = true,
+                            Name = "AssessApi",
+                            Type = ScopeType.Resource
                         }
                 };
 

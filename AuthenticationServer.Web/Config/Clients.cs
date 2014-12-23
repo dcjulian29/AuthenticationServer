@@ -28,7 +28,15 @@ namespace AuthenticationServer.Web.Config
                         {
                             "https://localhost:44300/"
                         }
-                }
+                },
+                new Client
+                    {
+                        Enabled = true,
+                        ClientName = "Assessment Web Service",
+                        ClientId = "AssessService",
+                        ClientSecret = "W3bS3rv!c3",
+                        Flow = Flows.ResourceOwner
+                    }
             };
         }
     }
