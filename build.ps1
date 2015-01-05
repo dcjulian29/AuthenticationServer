@@ -12,8 +12,7 @@ Properties {
   $build_configuration = "Release"
   $solution_file = "$base_directory\$projectName.sln"
 
-  $build_number = Invoke-Command -ScriptBlock { git rev-list HEAD --count }
-  $version = "0.1.$build_number"
+  $version = "0.9.0"
 }
 
 Task VsVar32 {
