@@ -21,12 +21,12 @@ namespace AuthenticationServer.Web.Config
                 new Client
                 {
                     Enabled = true,
-                    ClientName = "AuthorizationServer",
+                    ClientName = Properties.Settings.Default.SiteName,
                     ClientId = "authsrv",
                     Flow = Flows.Hybrid,
                     RedirectUris = new List<string>()
                         {
-                            "https://localhost:44300/"
+                            Properties.Settings.Default.SiteUri
                         }
                 },
                 new Client
