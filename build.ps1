@@ -12,7 +12,7 @@ Properties {
   $build_configuration = "Release"
   $solution_file = "$base_directory\$projectName.sln"
 
-  $version = "0.9.0"
+  $version = "0.10.0"
 }
 
 Task VsVar32 {
