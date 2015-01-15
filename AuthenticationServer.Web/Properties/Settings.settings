@@ -1,0 +1,15 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="AuthenticationServer.Web.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="SiteName" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">Authentication Server</Value>
+    </Setting>
+    <Setting Name="IssuerUri" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">https://localhost</Value>
+    </Setting>
+    <Setting Name="SiteUri" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">https://localhost:44300</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>
