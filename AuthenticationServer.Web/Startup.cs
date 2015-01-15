@@ -29,8 +29,8 @@ namespace AuthenticationServer.Web
                     id.UseIdentityServer(
                         new IdentityServerOptions
                         {
-                            SiteName = "Authentication Server",
-                            IssuerUri = "http://localhost",
+                            SiteName = Properties.Settings.Default.SiteName,
+                            IssuerUri = Properties.Settings.Default.IssuerUri,
                             SigningCertificate = LoadCertificate(),
                             Factory = InMemoryFactory.Create(Users.Get(), Clients.Get(), Scopes.Get())
                         });
@@ -45,28 +45,54 @@ namespace AuthenticationServer.Web
             app.UseOpenIdConnectAuthentication(
                 new OpenIdConnectAuthenticationOptions
                     {
-                        Authority = "https://localhost:44300/identity",
+                        Authority = String.Format("{0}/identity", Properties.Settings.Default.SiteUri),
                         ClientId = "authsrv",
                         Scope = "openid profile roles",
-                        RedirectUri = "https://localhost:44300/",
+                        RedirectUri = Properties.Settings.Default.SiteUri,
                         SignInAsAuthenticationType = "Cookies"
                     });
         }
 
         private X509Certificate2 LoadCertificate()
         {
-            var pfx = String.Format(
-                "{0}.Config.AuthenticationServer.pfx",
-                Assembly.GetExecutingAssembly().GetName().Name);
-            var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(pfx);
+            X509Certificate2 cert = null;
 
-            Debug.Assert(stream != null, "Authentication Server Certificate Is Missing!");
+            if (Properties.Settings.Default.IssuerUri.Contains("localhost"))
+            {
+                var pfx = String.Format(
+                    "{0}.Config.AuthenticationServer.pfx",
+                    Assembly.GetExecutingAssembly().GetName().Name);
+                var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(pfx);
 
-            var bytes = new byte[stream.Length];
-            stream.Read(bytes, 0, bytes.Length);
+                Debug.Assert(stream != null, "Authentication Server Certificate Is Missing!");
 
-            var cert = new X509Certificate2(bytes, String.Empty);
+                var bytes = new byte[stream.Length];
+                stream.Read(bytes, 0, bytes.Length);
 
+                cert = new X509Certificate2(bytes, String.Empty);
+            }
+            else
+            {
+                var store = new X509Store(StoreName.My, StoreLocation.LocalMachine);
+
+                store.Open(OpenFlags.ReadOnly | OpenFlags.OpenExistingOnly);
+
+                try
+                {
+                    var certs = store.Certificates.Find(X509FindType.FindBySubjectName, "CN = *.contoso.com", true);
+
+                    if (certs.Count == 1)
+                    {
+                        cert = certs[0];
+                    }
+                }
+                finally
+                {
+                    store.Close();
+                }
+            }
+
+            Debug.Assert(cert != null, "Signing Certificate is Missing!");
             return cert;
         }
     }
