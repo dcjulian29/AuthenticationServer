@@ -71,6 +71,26 @@ namespace AuthenticationServer.Web
 
                 cert = new X509Certificate2(bytes, String.Empty);
             }
+            else
+            {
+                var store = new X509Store(StoreName.My, StoreLocation.LocalMachine);
+
+                store.Open(OpenFlags.ReadOnly | OpenFlags.OpenExistingOnly);
+
+                try
+                {
+                    var certs = store.Certificates.Find(X509FindType.FindBySubjectName, "CN = *.contoso.com", true);
+
+                    if (certs.Count == 1)
+                    {
+                        cert = certs[0];
+                    }
+                }
+                finally
+                {
+                    store.Close();
+                }
+            }
 
             Debug.Assert(cert != null, "Signing Certificate is Missing!");
             return cert;
