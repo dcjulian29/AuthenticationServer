@@ -31,6 +31,10 @@ namespace AuthenticationServer.Web.Controllers
             return View();
         }
 
+        /// <summary>
+        /// Returns a view letting the user know they have been logged out.
+        /// </summary>
+        /// <returns>The Logout View</returns>
         public ActionResult Logout()
         {
             Request.GetOwinContext().Authentication.SignOut();
