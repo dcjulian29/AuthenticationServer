@@ -11,5 +11,8 @@
     <Setting Name="SiteUri" Type="System.String" Scope="Application">
       <Value Profile="(Default)">https://localhost:44300</Value>
     </Setting>
+    <Setting Name="HostingCertThumbprint" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">F2D13C5E611F94FB50F64CDE355CAE08E55E469A</Value>
+    </Setting>
   </Settings>
 </SettingsFile>
