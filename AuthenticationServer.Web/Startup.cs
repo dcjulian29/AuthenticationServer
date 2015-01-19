@@ -73,13 +73,16 @@ namespace AuthenticationServer.Web
             }
             else
             {
-                var store = new X509Store(StoreName.My, StoreLocation.LocalMachine);
+                var store = new X509Store("WebHosting", StoreLocation.LocalMachine);
 
                 store.Open(OpenFlags.ReadOnly | OpenFlags.OpenExistingOnly);
 
                 try
                 {
-                    var certs = store.Certificates.Find(X509FindType.FindBySubjectName, "CN = *.contoso.com", true);
+                    var certs = store.Certificates.Find(
+                        X509FindType.FindByThumbprint,
+                        Properties.Settings.Default.HostingCertThumbprint,
+                        true);
 
                     if (certs.Count == 1)
                     {

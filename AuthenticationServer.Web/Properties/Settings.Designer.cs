@@ -49,5 +49,14 @@ namespace AuthenticationServer.Web.Properties {
                 return ((string)(this["SiteUri"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("F2D13C5E611F94FB50F64CDE355CAE08E55E469A")]
+        public string HostingCertThumbprint {
+            get {
+                return ((string)(this["HostingCertThumbprint"]));
+            }
+        }
     }
 }
