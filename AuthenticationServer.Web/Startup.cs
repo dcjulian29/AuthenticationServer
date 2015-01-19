@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Reflection;
+using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using AuthenticationServer.Web.Config;
 using Microsoft.Owin.Security.Cookies;
@@ -96,7 +97,19 @@ namespace AuthenticationServer.Web
             }
 
             Debug.Assert(cert != null, "Signing Certificate is Missing!");
-            return cert;
+
+            try
+            {
+                using (var pk = cert.PrivateKey)
+                {
+                    return cert;
+                }
+
+            }
+            catch (CryptographicException)
+            {
+                throw new ApplicationException("Do not have access to private key to sign tokens!");
+            }
         }
     }
 }
