@@ -12,7 +12,8 @@ Properties {
   $build_configuration = "Release"
   $solution_file = "$base_directory\$projectName.sln"
 
-  $version = "0.14.0"
+  $lasttag = Invoke-Command -ScriptBlock { git describe --tags --abbrev=0 }
+  $version = if ($lasttag -eq $null) { "0.0.0" } else { $lasttag }
 }
 
 Task VsVar32 {
@@ -36,18 +37,21 @@ Task VsVar32 {
         $batch_file = "$vs12_dir\$vsvar32"
     }
     
-    $cmd = "`"$batch_file`" & set"
-    cmd /c "$cmd" | Foreach-Object `
-    {
-        $p, $v = $_.split('=')
-        Set-Item -path env:$p -value $v
+    if ($batch_file) {
+        $cmd = "`"$batch_file`" & set"
+        cmd /c "$cmd" | Foreach-Object `
+        {
+            $p, $v = $_.split('=')
+            Set-Item -path env:$p -value $v
+        }
+    } else {
+        Write-Warning "Vsvar32.bat was not found!"
     }
 }
 
 Task Clean -depends VsVar32 {
     Remove-Item -Force -Recurse $build_directory -ErrorAction SilentlyContinue | Out-Null
     exec { msbuild /m /p:Configuration="$build_configuration" /t:clean "$solution_file" }
-
 }
 
 Task Init -depends Clean {
@@ -76,8 +80,16 @@ using System.Runtime.InteropServices;
 "@
 }
 
-Task Compile -depends Version {
+
+Task PackageClean {
+    Remove-Item -Force -Recurse $package_directory -ErrorAction SilentlyContinue | Out-Null
+}
+
+Task PackageRestore -depends Init {
     exec { nuget restore "$solution_file" }
+}
+
+Task Compile -depends Version, PackageRestore {
     exec { 
         msbuild /m /p:BuildInParralel=true /p:Platform="Any CPU" `
             /p:Configuration="$build_configuration" `
