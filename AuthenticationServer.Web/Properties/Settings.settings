@@ -14,5 +14,11 @@
     <Setting Name="HostingCertThumbprint" Type="System.String" Scope="Application">
       <Value Profile="(Default)">F2D13C5E611F94FB50F64CDE355CAE08E55E469A</Value>
     </Setting>
+    <Setting Name="UserDatabase" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">Server=.\;Database=USERS;Trusted_Connection=True;</Value>
+    </Setting>
+    <Setting Name="UserQuery" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">SELECT UserName FROM PASSWORDS WHERE UserName=@USER AND Password=@PASS</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

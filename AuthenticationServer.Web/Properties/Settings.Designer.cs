@@ -58,5 +58,23 @@ namespace AuthenticationServer.Web.Properties {
                 return ((string)(this["HostingCertThumbprint"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Server=.\\;Database=USERS;Trusted_Connection=True;")]
+        public string UserDatabase {
+            get {
+                return ((string)(this["UserDatabase"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("SELECT UserName FROM PASSWORDS WHERE UserName=@USER AND Password=@PASS")]
+        public string UserQuery {
+            get {
+                return ((string)(this["UserQuery"]));
+            }
+        }
     }
 }
