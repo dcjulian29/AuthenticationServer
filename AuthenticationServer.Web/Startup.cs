@@ -8,7 +8,9 @@ using Microsoft.Owin.Security.Cookies;
 using Microsoft.Owin.Security.OpenIdConnect;
 using Owin;
 using Thinktecture.IdentityServer.Core.Configuration;
-using Thinktecture.IdentityServer.Core.Models;
+using Thinktecture.IdentityServer.Core.Logging;
+using Thinktecture.IdentityServer.Core.Logging.LogProviders;
+using Thinktecture.IdentityServer.Core.Services;
 
 namespace AuthenticationServer.Web
 {
@@ -23,17 +25,26 @@ namespace AuthenticationServer.Web
         /// <param name="app">The application builder object.</param>
         public void Configuration(IAppBuilder app)
         {
+            log4net.Config.XmlConfigurator.Configure();
+            LogProvider.SetCurrentLogProvider(new Log4NetLogProvider());
+
             app.Map(
                 "/identity",
-                id => 
+                id =>
                 {
+                    var factory = InMemoryFactory.Create(
+                        clients: Clients.Get(),
+                        scopes: Scopes.Get());
+
+                    factory.UserService = new Registration<IUserService, DatabaseUserService>();
+
                     id.UseIdentityServer(
                         new IdentityServerOptions
                         {
                             SiteName = Properties.Settings.Default.SiteName,
                             IssuerUri = Properties.Settings.Default.IssuerUri,
                             SigningCertificate = LoadCertificate(),
-                            Factory = InMemoryFactory.Create(Users.Get(), Clients.Get(), Scopes.Get())
+                            Factory = factory
                         });
                 });
 
@@ -104,7 +115,6 @@ namespace AuthenticationServer.Web
                 {
                     return cert;
                 }
-
             }
             catch (CryptographicException)
             {
