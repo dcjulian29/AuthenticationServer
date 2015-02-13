@@ -1,6 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
+using AuthenticationServer.Web.Properties;
 using Thinktecture.IdentityServer.Core.Models;
 
 namespace AuthenticationServer.Web.Config
@@ -21,12 +20,12 @@ namespace AuthenticationServer.Web.Config
                 new Client
                 {
                     Enabled = true,
-                    ClientName = Properties.Settings.Default.SiteName,
+                    ClientName = Settings.Default.SiteName,
                     ClientId = "authsrv",
                     Flow = Flows.Hybrid,
                     RedirectUris = new List<string>()
                         {
-                            Properties.Settings.Default.SiteUri
+                            Settings.Default.SiteUri
                         }
                 },
                 new Client
@@ -34,8 +33,11 @@ namespace AuthenticationServer.Web.Config
                         Enabled = true,
                         ClientName = "Assessment Web Service",
                         ClientId = "AssessService",
-                        ClientSecrets = new List<ClientSecret> { new ClientSecret("W3bS3rv!c3") },
-                        Flow = Flows.ResourceOwner
+                        ClientSecrets = new List<ClientSecret> { new ClientSecret("W3bS3rv!c3".Sha256()) },
+                        Flow = Flows.ResourceOwner,
+                        AbsoluteRefreshTokenLifetime = 3600,
+                        SlidingRefreshTokenLifetime = 600,
+                        RefreshTokenExpiration = TokenExpiration.Sliding
                     }
             };
         }
