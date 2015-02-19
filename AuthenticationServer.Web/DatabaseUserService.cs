@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
+﻿using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using AuthenticationServer.Web.Properties;
+using Thinktecture.IdentityServer.Core.Logging;
 using Thinktecture.IdentityServer.Core.Models;
 using Thinktecture.IdentityServer.Core.Services;
 
@@ -17,7 +16,7 @@ namespace AuthenticationServer.Web
     public class DatabaseUserService : IUserService
     {
         private Claim _databaseClaim = new Claim("role", "AuthDatabase");
-        private readonly static ILog _log = LogProvider.GetCurrentClassLogger();
+        private ILog _log = LogProvider.GetCurrentClassLogger();
 
         /// <summary>
         /// This method gets called when the user uses an external identity provider to authenticate.
@@ -44,10 +43,10 @@ namespace AuthenticationServer.Web
             string password,
             SignInMessage message = null)
         {
-            _log.Debug("User Database Connection String")
-            _log.Debug(Settings.Default.UserDatabase)
-            _log.Debug("User Query")
-            _log.Debug(Settings.Default.UserQuery)
+            _log.Debug("User Database Connection String");
+            _log.Debug(Settings.Default.UserDatabase);
+            _log.Debug("User Query");
+            _log.Debug(Settings.Default.UserQuery);
             
             using (var connection = new SqlConnection(Settings.Default.UserDatabase))
             {
