@@ -17,6 +17,7 @@ namespace AuthenticationServer.Web
     public class DatabaseUserService : IUserService
     {
         private Claim _databaseClaim = new Claim("role", "AuthDatabase");
+        private readonly static ILog _log = LogProvider.GetCurrentClassLogger();
 
         /// <summary>
         /// This method gets called when the user uses an external identity provider to authenticate.
@@ -43,6 +44,11 @@ namespace AuthenticationServer.Web
             string password,
             SignInMessage message = null)
         {
+            _log.Debug("User Database Connection String")
+            _log.Debug(Settings.Default.UserDatabase)
+            _log.Debug("User Query")
+            _log.Debug(Settings.Default.UserQuery)
+            
             using (var connection = new SqlConnection(Settings.Default.UserDatabase))
             {
                 connection.Open();
