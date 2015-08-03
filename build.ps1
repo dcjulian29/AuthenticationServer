@@ -23,6 +23,7 @@ Task VsVar32 {
         $base_dir = "C:\Program Files (x86)"
     }
     
+    $vs14_dir = "$base_dir\Microsoft Visual Studio 14.0"
     $vs12_dir = "$base_dir\Microsoft Visual Studio 12.0"
     $vs11_dir = "$base_dir\Microsoft Visual Studio 11.0"
     $vsvar32 = "\Common7\Tools\vsvars32.bat"
@@ -35,6 +36,10 @@ Task VsVar32 {
     
     if (Test-Path "$vs12_dir\$vsvar32") {
         $batch_file = "$vs12_dir\$vsvar32"
+    }
+    
+    if (Test-Path "$vs14_dir\$vsvar32") {
+        $batch_file = "$vs14_dir\$vsvar32"
     }
     
     if ($batch_file) {
@@ -99,21 +104,21 @@ Task Compile -depends Version, PackageRestore {
 
 Task Test -depends UnitTest
 
-Task UnitTest -depends Compile {
-    if ((Get-ChildItem -Path $package_directory -Filter "xunit.runners.*").Count -eq 0) {
+Task xUnit {
+    if ((Get-ChildItem -Path $package_directory -Filter "xunit.runner.console.*").Count -eq 0) {
         Push-Location $package_directory
-        exec { nuget install xunit.runners }
+        exec { nuget install xunit.runner.console }
         Pop-Location
     }
 
-    $xunit = Get-ChildItem -Path $package_directory -Filter "xunit.runners.*" `
+    $xunit = Get-ChildItem -Path $package_directory -Filter "xunit.runner.console.*" `
         | select -Last 1 -ExpandProperty FullName
-    $xunit = "$xunit\tools\xunit.console.clr4.exe"
+    $global:xunit = "$xunit\tools\xunit.console.exe"
+}
 
+Task UnitTest -depends Compile, xUnit {
     if (Test-Path $xunit) {
-        if (Test-Path "$release_directory\UnitTests.dll" ) {
-            exec { & $xunit "$release_directory\UnitTests.dll" }
-        }
+        exec { & $xunit "$release_directory\UnitTests.dll" }
     } else {
         Write-Error "xUnit console runner must be available to run tests."
     }
