@@ -4,6 +4,7 @@ using System.Reflection;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using AuthenticationServer.Web.Config;
+using Common.Logging;
 using Microsoft.Owin.Security.Cookies;
 using Microsoft.Owin.Security.OpenIdConnect;
 using Owin;
@@ -17,13 +18,15 @@ namespace AuthenticationServer.Web
     /// </summary>
     public class Startup
     {
+        private static ILog _log = LogManager.GetLogger<Startup>();
+
         /// <summary>
         /// Creates a configuration.
         /// </summary>
         /// <param name="app">The application builder object.</param>
         public void Configuration(IAppBuilder app)
         {
-            log4net.Config.XmlConfigurator.Configure();
+            _log.Debug(m => m("Starting Application Configuration..."));
 
             app.Map(
                 "/identity",
