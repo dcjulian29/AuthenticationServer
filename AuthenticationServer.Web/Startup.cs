@@ -7,10 +7,8 @@ using AuthenticationServer.Web.Config;
 using Microsoft.Owin.Security.Cookies;
 using Microsoft.Owin.Security.OpenIdConnect;
 using Owin;
-using Thinktecture.IdentityServer.Core.Configuration;
-using Thinktecture.IdentityServer.Core.Logging;
-using Thinktecture.IdentityServer.Core.Logging.LogProviders;
-using Thinktecture.IdentityServer.Core.Services;
+using IdentityServer3.Core.Configuration;
+using IdentityServer3.Core.Services;
 
 namespace AuthenticationServer.Web
 {
@@ -26,15 +24,14 @@ namespace AuthenticationServer.Web
         public void Configuration(IAppBuilder app)
         {
             log4net.Config.XmlConfigurator.Configure();
-            LogProvider.SetCurrentLogProvider(new Log4NetLogProvider());
 
             app.Map(
                 "/identity",
                 id =>
                 {
-                    var factory = InMemoryFactory.Create(
-                        clients: Clients.Get(),
-                        scopes: Scopes.Get());
+                    var factory = new IdentityServerServiceFactory()
+                        .UseInMemoryClients(Clients.Get())
+                        .UseInMemoryScopes(Scopes.Get());
 
                     factory.UserService = new Registration<IUserService, DatabaseUserService>();
 
@@ -50,19 +47,19 @@ namespace AuthenticationServer.Web
 
             app.UseCookieAuthentication(
                 new CookieAuthenticationOptions
-                    {
-                        AuthenticationType = "Cookies"
-                    });
+                {
+                    AuthenticationType = "Cookies"
+                });
 
             app.UseOpenIdConnectAuthentication(
                 new OpenIdConnectAuthenticationOptions
-                    {
-                        Authority = String.Format("{0}/identity", Properties.Settings.Default.SiteUri),
-                        ClientId = "authsrv",
-                        Scope = "openid profile roles",
-                        RedirectUri = Properties.Settings.Default.SiteUri,
-                        SignInAsAuthenticationType = "Cookies"
-                    });
+                {
+                    Authority = String.Format("{0}/identity", Properties.Settings.Default.SiteUri),
+                    ClientId = "authsrv",
+                    Scope = "openid profile roles",
+                    RedirectUri = Properties.Settings.Default.SiteUri,
+                    SignInAsAuthenticationType = "Cookies"
+                });
         }
 
         private X509Certificate2 LoadCertificate()

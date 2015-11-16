@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using Thinktecture.IdentityServer.Core.Models;
+﻿using System.Collections.Generic;
+using IdentityServer3.Core.Models;
 
 namespace AuthenticationServer.Web.Config
 {
