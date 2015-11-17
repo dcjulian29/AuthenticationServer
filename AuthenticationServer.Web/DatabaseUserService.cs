@@ -3,15 +3,15 @@ using System.Data.SqlClient;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using AuthenticationServer.Web.Properties;
-using Thinktecture.IdentityServer.Core.Logging;
-using Thinktecture.IdentityServer.Core.Models;
-using Thinktecture.IdentityServer.Core.Services;
+using IdentityServer3.Core.Logging;
+using IdentityServer3.Core.Models;
+using IdentityServer3.Core.Services;
 
 namespace AuthenticationServer.Web
 {
     /// <summary>
-    /// Provide a custom User Service for this Authentication Server to use
-    /// the username and password database to authenticate users
+    /// Provide a custom User Service for this Authentication Server to use the username and
+    /// password database to authenticate users
     /// </summary>
     public class DatabaseUserService : IUserService
     {
@@ -19,35 +19,31 @@ namespace AuthenticationServer.Web
         private ILog _log = LogProvider.GetCurrentClassLogger();
 
         /// <summary>
-        /// This method gets called when the user uses an external identity provider to authenticate.
+        /// This method gets called when the user uses an external identity provider to
+        /// authenticate. The user's identity from the external provider is passed via the
+        /// `externalUser` parameter which contains the provider identifier, the provider's
+        /// identifier for the user, and the claims from the provider for the external user.
         /// </summary>
-        /// <param name="externalUser">The external user.</param>
-        /// <param name="message">The sign-in message.</param>
-        /// <returns>The authentication result.</returns>
-        public Task<AuthenticateResult> AuthenticateExternalAsync(
-            ExternalIdentity externalUser,
-            SignInMessage message = null)
+        /// <param name="context">The context.</param>
+        /// <returns>A "null" result</returns>
+        public Task AuthenticateExternalAsync(ExternalAuthenticationContext context)
         {
-            return Task.FromResult<AuthenticateResult>(null);
+            return Task.FromResult(0);
         }
 
         /// <summary>
-        /// This methods gets called for when the user uses the username and password dialog.
+        /// This method gets called for local authentication (whenever the user uses the username
+        /// and password dialog).
         /// </summary>
-        /// <param name="username">The username.</param>
-        /// <param name="password">The password.</param>
-        /// <param name="message">The sign-in message.</param>
-        /// <returns>The authentication result</returns>
-        public Task<AuthenticateResult> AuthenticateLocalAsync(
-            string username,
-            string password,
-            SignInMessage message = null)
+        /// <param name="context">The authentication context.</param>
+        /// <returns>A "null" result</returns>
+        public Task AuthenticateLocalAsync(LocalAuthenticationContext context)
         {
             _log.Debug("User Database Connection String");
             _log.Debug(Settings.Default.UserDatabase);
             _log.Debug("User Query");
             _log.Debug(Settings.Default.UserQuery);
-            
+
             using (var connection = new SqlConnection(Settings.Default.UserDatabase))
             {
                 connection.Open();
@@ -57,13 +53,13 @@ namespace AuthenticationServer.Web
                 var userParameter = new SqlParameter
                 {
                     ParameterName = "@USER",
-                    Value = username
+                    Value = context.UserName
                 };
 
                 var passwordParameter = new SqlParameter
                 {
                     ParameterName = "@PASS",
-                    Value = password
+                    Value = context.Password
                 };
 
                 command.Parameters.Add(userParameter);
@@ -71,71 +67,83 @@ namespace AuthenticationServer.Web
 
                 var reader = command.ExecuteReader();
 
-                if (!reader.HasRows)
+                if (reader.HasRows)
                 {
-                    connection.Close();
-                    return Task.FromResult<AuthenticateResult>(null);
+                    reader.Read();
+
+                    var nameIdentifier = (string)reader[0];
+
+                    context.AuthenticateResult = new AuthenticateResult(
+                        nameIdentifier,
+                        context.UserName,
+                        new List<Claim> { _databaseClaim },
+                        "Database");
                 }
-
-                reader.Read();
-
-                var nameIdentifier = (string)reader[0];
-                
-                var result = new AuthenticateResult(
-                    nameIdentifier,
-                    username,
-                    new List<Claim> { _databaseClaim },
-                    "Database");
 
                 connection.Close();
 
-                return Task.FromResult<AuthenticateResult>(result);
+                return Task.FromResult(0);
             }
         }
 
         /// <summary>
-        /// This method is called whenever claims about the user are requested.
+        /// This method is called whenever claims about the user are requested (e.g. during token
+        /// creation or via the userinfo endpoint)
         /// </summary>
-        /// <param name="subject">The subject.</param>
-        /// <param name="requestedClaimTypes">The requested claim types.</param>
-        /// <returns>
-        /// The Claims for the user
-        /// </returns>
-        public Task<IEnumerable<Claim>> GetProfileDataAsync(
-            ClaimsPrincipal subject,
-            IEnumerable<string> requestedClaimTypes = null)
-        {
-            return Task.FromResult<IEnumerable<Claim>>(new List<Claim> { _databaseClaim });
-        }
-
-        /// <summary>
-        /// This method gets called whenever identity server needs to determine if the user
-        /// is valid or active (e.g. during token issuance or validation)
-        /// </summary>
-        /// <param name="subject">The subject.</param>
-        /// <returns><c>true</c> that the user is active</returns>
-        public Task<bool> IsActiveAsync(ClaimsPrincipal subject)
-        {
-            return Task.FromResult(true);
-        }
-        
-        /// <summary>
-        /// This methods gets called before the login page is shown. This allows you to authenticate the user
-        /// somehow based on data coming from the host (e.g. client certificates or trusted headers)
-        /// </summary>
-        /// <param name="message">The sign-in message.</param>
-        /// <returns>The authentication result or null to continue the flow.</returns>
-        public Task<AuthenticateResult> PreAuthenticateAsync(SignInMessage message)
-        {
-            return Task.FromResult<AuthenticateResult>(null);
-        }
-
-        /// <summary>
-        /// This method gets called when the user signs out (allows to cleanup resources)
-        /// </summary>
-        /// <param name="subject">The subject.</param>
+        /// <param name="context">The request context.</param>
         /// <returns>A "null" result</returns>
-        public Task SignOutAsync(ClaimsPrincipal subject)
+        public Task GetProfileDataAsync(ProfileDataRequestContext context)
+        {
+            context.IssuedClaims = new List<Claim>
+            {
+                _databaseClaim
+            };
+
+            return Task.FromResult(0);
+        }
+
+        /// <summary>
+        /// This method gets called whenever identity server needs to determine if the user is valid
+        /// or active (e.g. if the user's account has been deactivated since they logged in). (e.g.
+        /// during token issuance or validation).
+        /// </summary>
+        /// <param name="context">The context.</param>
+        /// <returns>A "null" result</returns>
+        public Task IsActiveAsync(IsActiveContext context)
+        {
+            context.IsActive = true;
+
+            return Task.FromResult(0);
+        }
+
+        /// <summary>
+        /// This method is called prior to the user being issued a login cookie for IdentityServer.
+        /// </summary>
+        /// <param name="context">The context.</param>
+        /// <returns>A "null" result</returns>
+        public Task PostAuthenticateAsync(PostAuthenticationContext context)
+        {
+            return Task.FromResult(0);
+        }
+
+        /// <summary>
+        /// This method gets called before the login page is shown. This allows you to determine if
+        /// the user should be authenticated by some out of band mechanism (e.g. client certificates
+        /// or trusted headers).
+        /// </summary>
+        /// <param name="context">The context.</param>
+        /// <returns>A "null" result</returns>
+        public Task PreAuthenticateAsync(PreAuthenticationContext context)
+        {
+            return Task.FromResult(0);
+        }
+
+        /// <summary>
+        /// This method gets called when the user signs out.
+        /// </summary>
+        /// <param name="context">The context.</param>
+        /// <returns>A "null" result</returns>
+        public Task SignOutAsync(SignOutContext context)
         {
             return Task.FromResult(0);
         }
