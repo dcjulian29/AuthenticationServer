@@ -88,7 +88,7 @@ namespace AuthenticationServer.Web
 
         /// <summary>
         /// This method is called whenever claims about the user are requested (e.g. during token
-        /// creation or via the userinfo endpoint)
+        /// creation or via the user info endpoint)
         /// </summary>
         /// <param name="context">The request context.</param>
         /// <returns>A "null" result</returns>
