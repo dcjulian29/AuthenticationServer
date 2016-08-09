@@ -142,7 +142,7 @@ Task("Coverage")
 Task("TeamCity")
     .Does(() =>
     {
-        if (DirectoryExists(baseDirectory + "UnitTests")) {
+        if (DirectoryExists(baseDirectory + "\\UnitTests")) {
             RunTarget("coverage");
 
             // Write class coverage
