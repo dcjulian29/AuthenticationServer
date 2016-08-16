@@ -7,6 +7,7 @@ var target = Argument("target", "Default");
 if (TeamCity.IsRunningOnTeamCity) {
     target = "teamcity";
 }
+
 var configuration = Argument("configuration", "Release");
 
 var projectName = "AuthenticationServer";
@@ -184,7 +185,6 @@ Task("TeamCity")
                 "##teamcity[buildStatisticValue key='CodeCoverageB' value='{0}']",
                 XmlPeek(buildDirectory + "\\coverage\\coverage.xml", "/CoverageSession/Summary/@branchCoverage")));
 
-
             // Report statement coverage
             Information(String.Format(
                 "##teamcity[buildStatisticValue key='CodeCoverageAbsSCovered' value='{0}']",
@@ -198,7 +198,6 @@ Task("TeamCity")
         } else {
             RunTarget("default");
         }
-
     });
 
 Task("Package")
