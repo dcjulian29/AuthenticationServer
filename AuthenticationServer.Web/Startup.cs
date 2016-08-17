@@ -5,11 +5,11 @@ using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using AuthenticationServer.Web.Config;
 using Common.Logging;
+using IdentityServer3.Core.Configuration;
+using IdentityServer3.Core.Services;
 using Microsoft.Owin.Security.Cookies;
 using Microsoft.Owin.Security.OpenIdConnect;
 using Owin;
-using IdentityServer3.Core.Configuration;
-using IdentityServer3.Core.Services;
 
 namespace AuthenticationServer.Web
 {
